@@ -27,17 +27,17 @@
   },
   "homepage": "https://github.com/qistoph/MMM-MyCommute#readme",
   "dependencies": {
-    "moment": "^2.18.1",
+    "moment": "^2.29.1",
     "moment-duration-format": "^1.3.0",
-    "request": "^2.81.0"
+    "request": "^2.88.2"
   },
   "devDependencies": {
-    "grunt": "latest",
-    "grunt-eslint": "latest",
-    "grunt-jsonlint": "latest",
+    "grunt": "^1.3.0",
+    "grunt-eslint": "^23.0.0",
+    "grunt-jsonlint": "^2.1.3",
     "grunt-markdownlint": "^1.0.43",
     "grunt-staged": "^0.1.0",
-    "grunt-stylelint": "latest",
+    "grunt-stylelint": "^0.16.0",
     "pre-commit": "^1.2.1",
     "stylelint": "^9.10.1",
     "stylelint-config-standard": "latest",
