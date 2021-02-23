@@ -295,7 +295,7 @@ Module.register("MMM-MyCommute", {
 		let params = "?";
 		params += "origin=" + encodeURIComponent(dest.origin || this.config.origin);
 		params += "&destination=" + encodeURIComponent(dest.destination);
-		params += "&key=" + this.config.apiKey;
+		params += "&key=" + (this.config.apiKey || this.config.apikey);
 		params += "&language=" + this.config.lang;
 
 		//travel mode
