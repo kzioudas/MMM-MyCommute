@@ -26,6 +26,7 @@ Module.register("MMM-MyCommute", {
 		hideDays: [],
 		showSummary: true,
 		showUpdated: true,
+		showUpdatedPosition: 'footer', // Valid options are header or footer
 		colorCodeTravelTime: true,
 		moderateTimeThreshold: 1.1,
 		poorTimeThreshold: 1.3,
@@ -433,6 +434,21 @@ Module.register("MMM-MyCommute", {
 		}
 	},
 
+	getHeader: function () {
+		var headerTitle = this.data.header;
+
+		if(this.config.showUpdated && this.config.showUpdatedPosition === 'header') {
+			headerTitle += " - " + this.translate("LAST_REFRESHED") 
+			
+			if(this.lastUpdated){
+				headerTitle += this.lastUpdated.format("HH:mm");
+			} else {
+				headerTitle += "no update received yet";
+			}
+		}
+		return headerTitle;
+	},
+
 	getDom: function() {
 		const wrapper = document.createElement("div");
 		if (this.loading) {
@@ -518,7 +534,7 @@ Module.register("MMM-MyCommute", {
 			wrapper.appendChild(row);
 		}
 
-		if(this.config.showUpdated) {
+		if(this.config.showUpdated && this.config.showUpdatedPosition === 'footer') {
 			const updatedRow = document.createElement("div");
 			updatedRow.classList.add("light");
 			updatedRow.classList.add("xsmall");
