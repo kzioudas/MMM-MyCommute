@@ -88,6 +88,7 @@ Option                              | Description
 `nextTransitVehicleDepartureFormat` | For any transit destinations where `showNextVehicleDeparture` is true, this dictates how to format the next arrival time.<br><br>**Type:** `string`<br>Defaults to `[next at] h:mm a`.
 `pollFrequency`                     | How frequently, in milliseconds, to poll for traffic predictions.<br>**BE CAREFUL WITH THIS!** We're using Google's free API which has a maximum of 2400 requests per day. Each entry in the destinations list requires its own request so if you set this to be too frequent, it's pretty easy to blow your request quota.<br><br>**Type:** `number`.<br>Defaults to `10 * 60 * 1000` (i.e.: 600000ms, or every 10 minutes)
 `destinations`                     | An array of destinations to which you would like to see commute times.<br><br>**Type:** `array` of objects.<br>See below for destination options.
+`showError`                        | Hides error message if false and renders the last result. This is meant to bypass short issues like a lost WiFi signal.<br><br>**Type:** `boolean`<br>Default to `true`
 
 Each object in the `destinations` array can have the following parameters:
 

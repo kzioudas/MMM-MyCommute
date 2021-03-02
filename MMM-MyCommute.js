@@ -38,6 +38,7 @@ Module.register("MMM-MyCommute", {
 		maxCalendarTime: 24 * 60 * 60 * 1000,
 		calendarOptions: [{mode: "driving"}],
 		showArrivalTime: true,
+		showError: true,
 		destinations: [
 			{
 				destination: "40 Bay St, Toronto, ON M5J 2X2",
@@ -456,6 +457,7 @@ Module.register("MMM-MyCommute", {
 			loading.innerHTML = this.translate("LOADING");
 			loading.className = "dimmed light small";
 			wrapper.appendChild(loading);
+			this.lastWrapper = wrapper;
 			return wrapper;
 		}
 
@@ -482,6 +484,10 @@ Module.register("MMM-MyCommute", {
 
 			//different rendering for single route vs multiple
 			if (p.error) {
+				if(!this.config.showError){
+					return this.lastWrapper;
+				} 
+
 				//no routes available.	display an error instead.
 				const errorTxt = document.createElement("span");
 				errorTxt.classList.add("route-error");
@@ -541,6 +547,7 @@ Module.register("MMM-MyCommute", {
 			updatedRow.innerHTML = this.translate("LAST_REFRESHED") + this.lastUpdated.format("HH:mm");
 			wrapper.appendChild(updatedRow);
 		}
+		this.lastWrapper = wrapper;
 		return wrapper;
 	},
 
