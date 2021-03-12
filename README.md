@@ -79,6 +79,7 @@ Option                              | Description
 `hideDays`                          | A list of numbers representing days of the week to hide the module.<br><br>**Type:** `array`<br>Valid numbers are 0 through 6, 0 = Sunday, 6 = Saturday.<br>e.g.: `[0,6]` hides the module on weekends.
 `showSummary`                       | Whether to show a brief summary of the route<br><br>**Type:** `boolean`<br>Defaults to `true`
 `showUpdated`                       | Show when the last update completed<br><br>**Type:** `boolean`<br>Default to `true`
+`showUpdatedPosition`               | Position where to show last update completed. Valid options are `header` or `footer`.<br><br>**Type:** `string`<br>Default to `footer`
 `colorCodeTravelTime`               | Whether to colour-code the travel time red, yellow, or green based on traffic.<br><br>**Type:** `boolean`<br>Defaults to `true`
 `travelTimeFormat`                  | How the module should format your total travel time.<br><br>**Type:** `string`<br>Defaults to `m [min]` (e.g. 86 min). Some other examples are `h[h] m[m]` (e.g.: 1h 26min), `h:mm` (e.g. 1:26). This uses the `moment-duration-format` plugin's [templating feature](https://github.com/jsmreese/moment-duration-format#template).
 `travelTimeFormatTrim`              | How to handle time tokens that have no value. For example, if you configure `travelTimeFormat` as `"hh:mm"` but the actual travel time is less than an hour, by default only the minute portion of the duration will be rendered. Set `travelTimeFormatTrim` to `false` to preserve the `hh:` portion of the format (e.g.: `00:21`). Valid options are `"left"`, `"right"` (e.g.: `2:00` renders as `2`), or `false` (e.g.: do not trim).<br><br>**Type:** `String` or `false`<br>Defaults to `"left"`.
@@ -87,6 +88,7 @@ Option                              | Description
 `nextTransitVehicleDepartureFormat` | For any transit destinations where `showNextVehicleDeparture` is true, this dictates how to format the next arrival time.<br><br>**Type:** `string`<br>Defaults to `[next at] h:mm a`.
 `pollFrequency`                     | How frequently, in milliseconds, to poll for traffic predictions.<br>**BE CAREFUL WITH THIS!** We're using Google's free API which has a maximum of 2400 requests per day. Each entry in the destinations list requires its own request so if you set this to be too frequent, it's pretty easy to blow your request quota.<br><br>**Type:** `number`.<br>Defaults to `10 * 60 * 1000` (i.e.: 600000ms, or every 10 minutes)
 `destinations`                     | An array of destinations to which you would like to see commute times.<br><br>**Type:** `array` of objects.<br>See below for destination options.
+`showError`                        | Hides error message if false and renders the last result. This is meant to bypass short issues like a lost WiFi signal.<br><br>**Type:** `boolean`<br>Default to `true`
 
 Each object in the `destinations` array can have the following parameters:
 
