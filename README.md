@@ -155,7 +155,7 @@ Option              | Description
 ------------------- | -----------
 `maxCalendarEvents` | Number of routes to show.<br><br>**Type:** `int`<br>Defaults to `0`
 `maxCalendarTime`   | Show routes only for appointments within this timeframe (in milliseconds).<br><br>**Type:** `int`<br>Defaults to `24 * 60 * 60 * 1000` (1 day)
-`calendarOptions`   | An array like the regular `destinations`. For each event all of these options are added as a route. All options from above can be used, except that `label` will be overwritten with the event subject and `destination` with the event location.<br><br>**Type:** `array`<br>Defaults to `[{mode: 'driving'}]`
+`calendarOptions`   | An array like the regular `destinations`. For each event all of these options are added as a route. All options from above can be used, except that `label` will be overwritten with the event subject and `destination` with the event location. `maxLabelLength` can be used to trim topics of appointments.<br><br>**Type:** `array`<br>Defaults to `[{mode: 'driving', maxLabelLength: 25}]`
 
 Here is an example of an entry in `config.js` including calendar event routes
 

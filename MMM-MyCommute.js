@@ -36,7 +36,7 @@ Module.register("MMM-MyCommute", {
 		pollFrequency: 10 * 60 * 1000, //every ten minutes, in milliseconds
 		maxCalendarEvents: 0,
 		maxCalendarTime: 24 * 60 * 60 * 1000,
-		calendarOptions: [{mode: "driving"}],
+		calendarOptions: [{mode: "driving", maxLabelLength: 25}],
 		showArrivalTime: true,
 		showError: true,
 		destinations: [
@@ -217,6 +217,13 @@ Module.register("MMM-MyCommute", {
 
 	appointmentDestinations: [],
 
+	trimCalendarLabel: function(label, maxLength) {
+		if (label.length > maxLength) {
+			label = label.substr(0, maxLength - 1) + "&hellip;";
+		}
+		return label;
+	},
+
 	setAppointmentDestinations: function(payload) {
 		this.appointmentDestinations = [];
 
@@ -235,7 +242,7 @@ Module.register("MMM-MyCommute", {
 			) {
 				this.appointmentDestinations.push.apply(this.appointmentDestinations,
 					this.config.calendarOptions.map( calOpt => Object.assign({}, calOpt, {
-						label: calendarEvent.title,
+						label: this.trimCalendarLabel(calendarEvent.title, calOpt.maxLabelLength),
 						destination: calendarEvent.location,
 						arrival_time: calendarEvent.startDate / 1000,
 						color: calendarEvent.color
