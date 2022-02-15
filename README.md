@@ -8,6 +8,24 @@ It is a fork of [jclarke0000's work](https://github.com/jclarke0000/MMM-MyCommut
 
 ![Screenshot](/screenshots/MMM-MyCommute-screenshot.png?raw=true "Screenshot")
 
+## Status
+
+I started this fork because it seems Jeff Clarke has abondoned MMM-MyCommute, no recent updates and not mering PR's. I have merged the interesting changes I've found in other forks.
+
+The module is a bit outdated, doesn't properly install on a new MagicMirror and doesn't live up to its expectations anymore. It's in need of a complete rewrite. 
+
+*Support MMM-MyCommute rebuild*
+
+I'm looking for some moral support to start a complete rebuild.
+
+The rebuild will be fully open source and free of charge.
+
+Feature requests from contributors will be implemented (reasonably).
+
+Donate here: https://gofund.me/b15bc3a0
+
+Forward and share the Gofund.me as you see fit. 
+
 ## Updating
 
 In a recent change the parameter `apikey` (no capitcal k) was renamed to `apiKey` (capital K). Please make sure, after updating you apply this change in your config.js too.
@@ -21,7 +39,7 @@ In a recent change the parameter `apikey` (no capitcal k) was renamed to `apiKey
 5. **NOTE:** After the free period you might need to [enable billing](https://console.cloud.google.com/project/_/billing/enable).
 6. Restart MagicMirror<br>e.g. `pm2 restart mm`
 
-## Billing
+## Google Billing
 
 According to the [billing information](https://cloud.google.com/maps-platform/pricing/): "you get $200 free usage every month for Maps, Routes, or Places. Based on the millions of users using our APIs today, most of them can continue to use Google Maps Platform for free with this credit."
 
@@ -204,10 +222,6 @@ Installed during installation
 
 - [request](https://www.npmjs.com/package/request)
 - [moment](https://www.npmjs.com/package/moment)
-
-## Status
-
-Because it seems Jeff Clarke has abondoned MMM-MyCommute, no recent updates and not mering PR's, I've introduced this fork as an alternative. I have merged the interesting changes I've found in other forks and am willing to accept PR's for additional suggestions.
 
 ## Special Thanks
 
