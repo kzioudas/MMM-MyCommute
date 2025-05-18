@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MMM-MyCommute Control Panel</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        h2 { margin-top: 1em; }
+        label { display: block; margin-top: 1em; }
+        input, select {
+            padding: 5px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        .response {
+            margin-top: 1em;
+            font-size: 0.9em;
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<h1>MMM-MyCommute Control Panel</h1>
+
+<h2>Add Destination</h2>
+<label>Label
+    <input type="text" id="label">
+</label>
+<label>Destination Address
+    <input type="text" id="destination">
+</label>
+<label>Mode
+    <select id="mode">
+        <option value="driving">Driving</option>
+        <option value="walking">Walking</option>
+        <option value="transit">Transit</option>
+        <option value="bicycling">Bicycling</option>
+    </select>
+</label>
+<button onclick="addDestination()">Add Destination</button>
+<div id="addResp" class="response"></div>
+
+<h2>Manage Destinations</h2>
+<label>Select Destination
+    <select id="destinationSelect"></select>
+</label>
+<button onclick="removeSelected()">Remove</button>
+<button onclick="toggleSelected()">Enable/Disable</button>
+<div id="manageResp" class="response"></div>
+
+<h2>Update Poll Frequency</h2>
+<label>Frequency (ms)
+    <input type="number" id="pollFrequency" value="600000">
+</label>
+<button onclick="updateConfig()">Update Config</button>
+<div id="updateResp" class="response"></div>
+
+<script>
+    async function loadDestinations() {
+        try {
+            const res = await fetch("/mycommute/list");
+            const destinations = await res.json();
+            const select = document.getElementById("destinationSelect");
+            select.innerHTML = "";
+            destinations.forEach(dest => {
+                const opt = document.createElement("option");
+                opt.value = dest.label;
+                opt.textContent = `${dest.label} (${dest.disabled ? "Disabled" : "Enabled"})`;
+                select.appendChild(opt);
+            });
+        } catch (err) {
+            console.error("Failed to load destinations:", err);
+        }
+    }
+
+    function addDestination() {
+        const label = document.getElementById('label').value;
+        const destination = document.getElementById('destination').value;
+        const mode = document.getElementById('mode').value;
+
+        fetch("/mycommute/add", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ label, destination, mode })
+        })
+            .then(res => res.ok ? "Added." : Promise.reject("Failed"))
+            .then(msg => {
+                document.getElementById('addResp').textContent = msg;
+                loadDestinations();
+            })
+            .catch(err => showError('addResp', err));
+    }
+
+    function removeSelected() {
+        const label = document.getElementById("destinationSelect").value;
+        if (!label) return;
+        fetch("/mycommute/remove", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ label })
+        })
+            .then(res => res.ok ? "Removed." : Promise.reject("Failed"))
+            .then(msg => {
+                document.getElementById('manageResp').textContent = msg;
+                loadDestinations();
+            })
+            .catch(err => showError('manageResp', err));
+    }
+
+    function toggleSelected() {
+        const select = document.getElementById("destinationSelect");
+        const label = select.value;
+        const isDisabled = select.options[select.selectedIndex].text.includes("Disabled");
+        const enabled = isDisabled; // Toggle
+        fetch("/mycommute/toggle", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ label, enabled })
+        })
+            .then(res => res.ok ? "Toggled." : Promise.reject("Failed"))
+            .then(msg => {
+                document.getElementById('manageResp').textContent = msg;
+                loadDestinations();
+            })
+            .catch(err => showError('manageResp', err));
+    }
+
+    function updateConfig() {
+        const pollFrequency = parseInt(document.getElementById('pollFrequency').value);
+        fetch("/mycommute/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pollFrequency })
+        })
+            .then(res => res.ok ? "Updated." : Promise.reject("Failed"))
+            .then(msg => document.getElementById('updateResp').textContent = msg)
+            .catch(err => showError('updateResp', err));
+    }
+
+    function showError(id, message) {
+        const el = document.getElementById(id);
+        el.textContent = "Error: " + message;
+        el.classList.add("error");
+    }
+
+    document.addEventListener("DOMContentLoaded", loadDestinations);
+</script>
+</body>
+</html>

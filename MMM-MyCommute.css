@@ -117,3 +117,12 @@
   margin-bottom: -2px;
   margin-right: 2px;
 }
+
+.qr-container {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.qr-container canvas {
+  margin-top: 5px;
+}
