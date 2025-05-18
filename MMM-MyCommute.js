@@ -39,31 +39,9 @@ Module.register("MMM-MyCommute", {
 		calendarOptions: [{mode: "driving", maxLabelLength: 25}],
 		showArrivalTime: true,
 		showError: true,
-		destinations: [
-			{
-				destination: "40 Bay St, Toronto, ON M5J 2X2",
-				label: "Air Canada Centre",
-				mode: "walking",
-				time: null
-			},
-			{
-				destination: "317 Dundas St W, Toronto, ON M5T 1G4",
-				label: "Art Gallery of Ontario",
-				mode: "transit",
-				time: null
-			},
-			{
-				destination: "55 Mill St, Toronto, ON M5A 3C4",
-				label: "Distillery",
-				mode: "bicycling",
-				time: null
-			},
-			{
-				destination: "6301 Silver Dart Dr, Mississauga, ON L5P 1B2",
-				label: "Pearson Airport",
-				time: null
-			}
-		]
+		cheapTrick: false,
+		maxCallsPerDay: 100,
+		destinations: []
 	},
 
 	getTranslations: function() {
@@ -140,12 +118,20 @@ Module.register("MMM-MyCommute", {
 		this.loading = true;
 		this.inWindow = true;
 		this.isHidden = false;
+		this.callsMadeToday = 0;
+		this.today = moment().format("YYYY-MM-DD");
 
-		//start data poll
 		this.getData();
 		this.rescheduleInterval();
 	},
-
+	hasRemainingCalls: function() {
+		const today = moment().format("YYYY-MM-DD");
+		if (this.today !== today) {
+			this.today = today;
+			this.callsMadeToday = 0;
+		}
+		return this.callsMadeToday < this.config.maxCallsPerDay;
+	},
 	rescheduleInterval: function() {
 		const self = this;
 		if(this.interval !== null) {
@@ -265,14 +251,11 @@ Module.register("MMM-MyCommute", {
 	getData: function() {
 		Log.log(this.name + " refreshing routes");
 
-		//only poll if in window
-		if (this.isInWindow(this.config.startTime, this.config.endTime, this.config.hideDays)) {
-			//build URLs
+		if (this.isInWindow(this.config.startTime, this.config.endTime, this.config.hideDays) && this.hasRemainingCalls()) {
 			let destinationGetInfo = [];
 			const destinations = this.getDestinations();
 			for(let i = 0; i < destinations.length; i++) {
 				const d = destinations[i];
-
 				const destStartTime = d.startTime || "00:00";
 				const destEndTime = d.endTime || "23:59";
 				const destHideDays = d.hideDays || [];
@@ -285,16 +268,20 @@ Module.register("MMM-MyCommute", {
 			this.inWindow = true;
 
 			if (destinationGetInfo.length > 0) {
+				this.callsMadeToday++;
 				this.sendSocketNotification("GOOGLE_TRAFFIC_GET", {destinations: destinationGetInfo, instanceId: this.identifier});
 			} else {
-				this.hide(1000, {lockString: this.identifier});
+				this.hide(1000, () => {});
 				this.inWindow = false;
 				this.isHidden = true;
 			}
 
 			this.lastUpdate = new Date();
+		} else if (!this.hasRemainingCalls()) {
+			this.limitReached = true;
+			Log.log(this.name + " has reached the daily call limit. Skipping polling.");
 		} else {
-			this.hide(1000, {lockString: this.identifier});
+			this.hide(1000, () => {});
 			this.inWindow = false;
 			this.isHidden = true;
 		}
@@ -546,7 +533,13 @@ Module.register("MMM-MyCommute", {
 			row.appendChild(icon);
 			wrapper.appendChild(row);
 		}
-
+		if (this.limitReached) {
+			const limitMsg = document.createElement("div");
+			limitMsg.className = "dimmed light small";
+			limitMsg.innerHTML = "Daily API limit reached. Check back tomorrow.";
+			wrapper.appendChild(limitMsg);
+			return wrapper;
+		}
 		if(this.config.showUpdated && this.config.showUpdatedPosition === "footer") {
 			const updatedRow = document.createElement("div");
 			updatedRow.classList.add("light");
@@ -566,14 +559,14 @@ Module.register("MMM-MyCommute", {
 				this.loading = false;
 				if (this.isHidden) {
 					this.updateDom();
-					this.show(1000, { lockString: this.identifier });
+					this.show(1000, () => {});
 				} else {
 					this.updateDom(1000);
 				}
 			} else {
 				this.updateDom();
 				if ( this.isHidden ) {
-					this.show(1000, { lockString: this.identifier });
+					this.show(1000, () => {});
 				}
 			}
 			this.isHidden = false;
@@ -582,7 +575,7 @@ Module.register("MMM-MyCommute", {
 
 	notificationReceived: function(notification, payload) {
 		if (notification === "DOM_OBJECTS_CREATED" && !this.inWindow) {
-			this.hide(0, { lockString: this.identifier });
+			this.hide(0, () => {});
 			this.isHidden = true;
 		} else if (notification === "CALENDAR_EVENTS") {
 			this.setAppointmentDestinations(payload);
